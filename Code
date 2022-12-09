@@ -1,0 +1,66 @@
+// Set a photoresistor as input in Pin A0 and a TMP36 as input in Pin A1
+// Set a motor as output in Pin 5 and an LED as output in pin 6
+// Create variables that will hold sensor and component values and set to 0
+// Create variables that will be used to calculate the temperature
+int lightMeter = 0;
+int tempPin = 1;
+int motor1a = 6;
+int motor1b = 7;
+int speed = 11;
+int light = 9;
+int lightLevel = 0;
+int fanValue = 0;
+int ledValue = 0;
+float voltage = 0;
+float celsius = 0;
+float fahrenheit = 0;
+
+void setup(){
+  pinMode(lightMeter, INPUT);
+  pinMode(tempPin, INPUT);
+  pinMode(speed, OUTPUT);
+  pinMode(motor1a, OUTPUT);
+  pinMode(motor1b, OUTPUT);
+  pinMode(light, OUTPUT);
+  digitalWrite(motor1a, HIGH);
+  digitalWrite(motor1b, LOW);
+}
+
+// This function returns the temperature as read by the TMP36 sensor
+float checkTemperature(){
+  voltage = analogRead(tempPin) * .004882814;
+  celsius = (voltage - .5) * 100;
+  fahrenheit = celsius = celsius * (9/5) + 32;
+  return fahrenheit;
+}
+
+void loop(){
+  if(checkTemperature()>80){
+      analogWrite(speed, fanValue);
+      digitalWrite(motor1a, HIGH);
+      digitalWrite(motor1b, LOW);
+      if(fanValue<254){
+        fanValue += 1;
+      }
+  }
+  if(checkTemperature()<80){
+      analogWrite(speed, fanValue);
+      digitalWrite(motor1a, HIGH);
+      digitalWrite(motor1b, LOW);
+      if(fanValue>0){
+        fanValue -= 1;
+      }
+  }
+  if(analogRead(lightMeter)>150){
+      analogWrite(light, ledValue);
+      if(ledValue>1){
+        ledValue -= 1;
+      }
+  }
+  if(analogRead(lightMeter)<150){
+      analogWrite(light, ledValue);
+      if(ledValue<254){
+        ledValue += 1;
+      }
+  }
+}
